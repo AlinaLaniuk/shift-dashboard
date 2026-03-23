@@ -1,6 +1,7 @@
+import ShiftDashboard from '@features/ShiftDashboard/ShiftDashboard';
+
 function App() {
-  return <>
-  </>;
+  return <ShiftDashboard />;
 }
 
 export default App;
