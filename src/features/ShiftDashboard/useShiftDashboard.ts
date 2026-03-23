@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { shiftMock } from '../../mocks/mocks';
+import { useEffect, useState } from 'react';
 import type { ShiftData } from '@apiTypes/shift';
 import { prepareShiftData } from '@features/ShiftDashboard/prepareShiftData';
+import { shiftApi } from '@api/shiftApi';
 
 const defaultData: ShiftData = {
   shift: { start: '', end: '' },
@@ -13,7 +13,11 @@ const defaultData: ShiftData = {
 };
 
 export function useDataForCharts() {
-  const [rawData, setData] = useState(shiftMock);
+  const [rawData, setData] = useState(defaultData);
+
+  useEffect(() => {
+    shiftApi.getShiftData().then((res) => setData(res));
+  }, []);
 
   const {
     start,
