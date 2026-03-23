@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ShiftData } from '@apiTypes/shift';
-import { prepareShiftData } from '@features/ShiftDashboard/prepareShiftData';
+import { prepareShiftData } from '@components/dashboard/prepareShiftData';
 import { shiftApi } from '@api/shiftApi';
 
 const defaultData: ShiftData = {
@@ -12,7 +12,7 @@ const defaultData: ShiftData = {
   events: [],
 };
 
-export function useDataForCharts() {
+export function useDashboard() {
   const [rawData, setData] = useState(defaultData);
 
   useEffect(() => {

@@ -1,27 +1,14 @@
-import ReactECharts from 'echarts-for-react';
-import { getOption } from './chartConfiguration/getOption';
-import { useDataForCharts } from './useShiftDashboard';
+import { CommentModal } from '@components/commentModal/CommentModal';
+import Dashboard from '@components/dashboard/Dashboard';
+import { useCommentModal } from '../../components/commentModal/useCommentModal';
 
-const ShiftDashboard = () => {
-  const dashboardData = useDataForCharts();
-
-  const option = getOption(dashboardData);
-
-  // const onEvents = {
-  //   click: (params) => {
-  //     if (params.seriesName === 'events') {
-  //       const id = params.data[6];
-  //       console.log(id);
-  //       setOpen(true);
-  //     }
-  //   },
-  // };
+export function ShiftDashboard() {
+  const { openModal, isOpen, closeModal, setComment } = useCommentModal();
 
   return (
     <>
-      <ReactECharts option={option} style={{ height: 1000, width: '100%' }} />
+      <Dashboard openCommentModal={openModal} />
+      <CommentModal isOpen={isOpen} closeModal={closeModal} setComment={setComment}/>
     </>
   );
-};
-
-export default ShiftDashboard;
+}

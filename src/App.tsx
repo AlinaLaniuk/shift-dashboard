@@ -1,4 +1,4 @@
-import ShiftDashboard from '@features/ShiftDashboard/ShiftDashboard';
+import { ShiftDashboard } from '@features/shiftDashboard/ShiftDashboard';
 
 function App() {
   return <ShiftDashboard />;

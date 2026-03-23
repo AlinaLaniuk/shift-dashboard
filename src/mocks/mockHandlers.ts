@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-export const handlers = [
+export const mockHandlers = [
   http.get('/shift', () => {
     try {
       const mock = localStorage.getItem('shift');
