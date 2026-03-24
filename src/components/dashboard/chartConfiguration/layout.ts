@@ -1,10 +1,10 @@
 import type { SpeedVisualMapData } from '@chartsTypes/chartTypes';
 
 export const grids = [
-  { left: 50, right: 50, top: 0, height: '10%' }, // продукты
-  { left: 50, right: 50, top: '12%', height: '10%' }, // кол-во
-  { left: 50, right: 50, top: '25%', height: '15%' }, // скорость и уставка
-  { left: 50, right: 50, top: '45%', height: '10%' }, // события
+  { left: 50, right: 50, top: 0, height: '23%' }, // продукты
+  { left: 50, right: 50, top: '25%', height: '23%' }, // кол-во
+  { left: 50, right: 50, top: '50%', height: '23%' }, // скорость и уставка
+  { left: 50, right: 50, top: '75%', height: '23%' }, // события
 ];
 
 export function createXAxis(start: number, end: number) {

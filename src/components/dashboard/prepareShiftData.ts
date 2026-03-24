@@ -1,7 +1,13 @@
 import type { ShiftData } from '@apiTypes/shift';
-import type { DashboardData, EventDataTuple, LineSpeed, Products, ProductsCounter } from '@chartsTypes/chartTypes';
+import type {
+  DashboardData,
+  EventDataTuple,
+  LineSpeed,
+  Products,
+  ProductsCounter,
+} from '@chartsTypes/chartTypes';
 import { themeColors, productsColors, eventsColors } from '@constants/colors';
-import { getTimestampFromISO } from '@utils/helpers/timeHelpers';
+import { getTimestampFromISO, getDate } from '@utils/helpers/timeHelpers';
 
 export type SpeedPoint = {
   value: [number, number];
@@ -9,6 +15,7 @@ export type SpeedPoint = {
 };
 
 export function prepareShiftData(rawData: ShiftData): DashboardData {
+  const date = getDate(rawData.shift.start);
   const start = getTimestampFromISO(rawData.shift.start);
   const end = getTimestampFromISO(rawData.shift.end);
 
@@ -181,6 +188,7 @@ export function prepareShiftData(rawData: ShiftData): DashboardData {
   const speedMarkAreaData = getSpeedMarkAreaData();
 
   return {
+    date,
     start,
     end,
     products,

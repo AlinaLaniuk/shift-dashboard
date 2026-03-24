@@ -22,7 +22,7 @@ const Dashboard = ({ openCommentModal, dashboardData, setCurrentEvent }: Dashboa
   };
 
   return (
-    <ReactECharts option={option} style={{ height: 1000, width: '100%' }} onEvents={onEvents} />
+    <ReactECharts option={option} style={{ height: 600, width: '100%' }} onEvents={onEvents} />
   );
 };
 

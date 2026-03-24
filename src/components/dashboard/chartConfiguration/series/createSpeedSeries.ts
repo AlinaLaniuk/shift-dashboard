@@ -21,6 +21,9 @@ export function createSpeedSeries(
         opacity: 0.3,
       },
       data: speedMarkAreaData,
+      tooltip: {
+        show: false,
+      },
     },
     tooltip: {
       formatter: (params: { value: LineSpeed }) => {

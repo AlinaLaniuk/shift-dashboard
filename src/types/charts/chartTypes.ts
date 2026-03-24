@@ -28,6 +28,7 @@ export type SpeedSetpoint = {
 };
 export type SpeedMarkAreaData = { xAxis: number }[][];
 export interface DashboardData {
+  date: string,
   start: number;
   end: number;
   products: Products[];
