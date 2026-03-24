@@ -1,6 +1,6 @@
 import type { DashboardData } from '@chartsTypes/chartTypes';
 import { tooltip, axisPointer } from './interactions';
-import { getVisualMap, grids, createXAxis, yAxis } from './layout';
+import { getVisualMap, grids, createXAxis, yAxis, dataZoom } from './layout';
 import { createEventsSeries } from './series/createEventsSeries';
 import { createProductsCounterSeries } from './series/createProductsCounterSeries';
 import { createProductsSeries } from './series/createProductsSeries';
@@ -25,6 +25,7 @@ export function getOption({
     grid: grids,
     xAxis: createXAxis(start, end),
     yAxis: yAxis,
+    dataZoom: dataZoom,
     series: [
       createProductsSeries(products),
       createProductsCounterSeries(productsCounter),

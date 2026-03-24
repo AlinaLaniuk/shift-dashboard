@@ -1,10 +1,10 @@
 import type { SpeedVisualMapData } from '@chartsTypes/chartTypes';
 
 export const grids = [
-  { left: 50, right: 50, top: 0, height: '23%' }, // продукты
-  { left: 50, right: 50, top: '25%', height: '23%' }, // кол-во
-  { left: 50, right: 50, top: '50%', height: '23%' }, // скорость и уставка
-  { left: 50, right: 50, top: '75%', height: '23%' }, // события
+  { left: 50, right: 50, top: 0, height: '15%' }, // продукты
+  { left: 50, right: 50, top: '20%', height: '15%' }, // кол-во
+  { left: 50, right: 50, top: '43%', height: '15%' }, // скорость и уставка
+  { left: 50, right: 50, top: '65%', height: '15%' }, // события
 ];
 
 export function createXAxis(start: number, end: number) {
@@ -92,6 +92,7 @@ export const yAxis = [
     min: 0,
     max: 1,
     name: 'Продукты',
+    scale: true,
     gridIndex: 0,
     nameLocation: 'middle',
     axisLabel: {
@@ -105,6 +106,7 @@ export const yAxis = [
   {
     type: 'value',
     name: 'Готовая продукция',
+    scale: true,
     nameLocation: 'middle',
     axisLabel: {
       show: false,
@@ -121,6 +123,7 @@ export const yAxis = [
   {
     type: 'value',
     name: 'Скорость / Уставка',
+    scale: true,
     nameLocation: 'middle',
     axisLabel: {
       show: false,
@@ -137,6 +140,7 @@ export const yAxis = [
   {
     type: 'category',
     name: 'События линии',
+    scale: true,
     gridIndex: 3,
     nameLocation: 'middle',
     axisLabel: {
@@ -157,5 +161,16 @@ export const getVisualMap = (speedVisualMapData: SpeedVisualMapData) => [
     dimension: 0,
     show: false,
     pieces: speedVisualMapData,
+  },
+];
+
+export const dataZoom = [
+  {
+    type: 'inside',
+    xAxisIndex: [0, 1, 2, 3],
+    start: 0,
+    end: 100,
+    minSpan: 20,
+    filterMode: 'weakFilter',
   },
 ];

@@ -1,3 +1,4 @@
+import { EVENTS_MAP } from '@constants/eventMap';
 import { formatTimeHHMM } from '@utils/helpers/timeHelpers';
 
 interface AxisPointerLabelFormatterParams {
@@ -30,6 +31,10 @@ export const tooltip = {
 
           if (params.axisIndex === 1 || params.axisIndex === 2) {
             return Math.floor(value);
+          }
+
+          if (params.axisIndex === 3) {
+            return EVENTS_MAP[value]?.label;
           }
         }
 

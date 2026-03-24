@@ -1,6 +1,8 @@
+import type { EventType } from '@apiTypes/shift';
 import type { EventDataTuple } from '@chartsTypes/chartTypes';
+import { TYPE_TO_ROW } from '@constants/eventMap';
 import { formatTimeHHMM } from '@utils/helpers/timeHelpers';
-import { format, type CustomSeriesOption } from 'echarts';
+import { format, graphic, type CustomSeriesOption } from 'echarts';
 import type { CustomSeriesRenderItemAPI, CustomSeriesRenderItemParams } from 'echarts';
 
 export function createEventsSeries(data: CustomSeriesOption['data']) {
@@ -11,6 +13,9 @@ export function createEventsSeries(data: CustomSeriesOption['data']) {
     yAxisIndex: 3,
     renderItem: renderEventsItem,
     data: data,
+    encode: {
+      x: [2, 3],
+    },
     tooltip: {
       formatter: (params: { value: EventDataTuple }) => {
         const [, label, start, end, , comment] = params.value;
@@ -25,45 +30,50 @@ export function createEventsSeries(data: CustomSeriesOption['data']) {
   };
 }
 
-const TYPE_TO_ROW: Record<string, number> = {
-  WORK: 0,
-  STOP: 1,
-  LOW_SPEED: 2,
-  STANDARD_OPERATION: 3,
-  CIP: 4,
+type CartesianCoordSys = {
+  type: 'cartesian2d';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };
-
 export function renderEventsItem(
-  _params: CustomSeriesRenderItemParams,
+  params: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
 ) {
-  const start = new Date(api.value(2)).getTime();
-  const end = new Date(api.value(3)).getTime();
-  const type = api.value(4);
+  const start = api.value(2);
+  const end = api.value(3);
+  const type = api.value(4) as EventType;
   const color = api.value(7);
+
   const rowIndex = TYPE_TO_ROW[type] ?? 0;
 
   const startCoord = api.coord([start, rowIndex]);
   const endCoord = api.coord([end, rowIndex]);
-  const sizeRaw = api.size?.([0, 1]) ?? [0, 0];
-  const size = Array.isArray(sizeRaw) ? sizeRaw : [sizeRaw, sizeRaw];
-  const barHeight = size[1] * 0.6;
+
+  const sizeArr = api.size ? api.size([0, 1]) : undefined;
+  const barHeight = Array.isArray(sizeArr) ? (sizeArr[1] ?? 20) * 0.6 : 20 * 0.6;
+
+  const rectShape = {
+    x: startCoord[0],
+    y: startCoord[1] - barHeight / 2,
+    width: endCoord[0] - startCoord[0],
+    height: barHeight,
+  };
+  const coordSys = params.coordSys as CartesianCoordSys;
+  const clipped = graphic.clipRectByRect(rectShape, {
+    x: coordSys.x,
+    y: coordSys.y,
+    width: coordSys.width,
+    height: coordSys.height,
+  });
+
+  if (!clipped) return null;
+
   return {
     type: 'rect',
-    shape: {
-      x: startCoord[0],
-      y: startCoord[1] - barHeight / 2,
-      width: endCoord[0] - startCoord[0],
-      height: barHeight,
-    },
-    style: {
-      fill: color,
-    },
-    info: {
-      type,
-      start,
-      end,
-      raw: api.value(0),
-    },
+    shape: clipped,
+    style: { fill: color },
+    info: { type, start, end, raw: api.value(0) },
   };
 }

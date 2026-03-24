@@ -12,6 +12,7 @@ import { getTimestampFromISO, getDate } from '@utils/helpers/timeHelpers';
 export type SpeedPoint = {
   value: [number, number];
   interval: [number, number];
+  symbol?: string;
 };
 
 export function prepareShiftData(rawData: ShiftData): DashboardData {
@@ -39,19 +40,32 @@ export function prepareShiftData(rawData: ShiftData): DashboardData {
     const end = getTimestampFromISO(item.end);
     const value = item.value;
 
+    const fakePoints: SpeedPoint[] = []; // массив доп точек, чтобы при зуме не исчезала линия
+
+    const step = (end - start) / 20;
+
+    for (let i = 1; i < 20; i++) {
+      fakePoints.push({
+        value: [start + step * i, value],
+        interval: [start, end],
+        symbol: 'none',
+      });
+    }
+
     return [
       ...acc,
       {
         value: [start, value],
         interval: [start, end],
       },
+      ...fakePoints,
       {
         value: [end, value],
         interval: [start, end],
       },
     ];
   }, []);
-
+  console.log(speedSetpoint);
   function buildSpeedIntervals() {
     const lineSpeed = rawData.lineSpeed;
     const speedSetpoint = rawData.speedSetpoint;
