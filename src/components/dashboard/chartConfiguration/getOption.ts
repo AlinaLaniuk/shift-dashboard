@@ -1,7 +1,7 @@
 import type { DashboardData } from '@chartsTypes/chartTypes';
 import { tooltip, axisPointer } from './interactions';
-import { getVisualMap, grids, createXAxis, yAxis, dataZoom } from './layout';
-import { createEventsSeries } from './series/createEventsSeries';
+import { getVisualMap, grids, createXAxis, yAxis, dataZoom, legend } from './layout';
+import { createEventsSeries, fakeEventsSeries } from './series/createEventsSeries';
 import { createProductsCounterSeries } from './series/createProductsCounterSeries';
 import { createProductsSeries } from './series/createProductsSeries';
 import { createSpeedSeries } from './series/createSpeedSeries';
@@ -26,12 +26,14 @@ export function getOption({
     xAxis: createXAxis(start, end),
     yAxis: yAxis,
     dataZoom: dataZoom,
+    legend: legend,
     series: [
       createProductsSeries(products),
       createProductsCounterSeries(productsCounter),
       createSpeedSeries(lineSpeed, speedMarkAreaData),
       createSpeedSetpointSeries(speedSetpoint),
       createEventsSeries(events),
+      ...fakeEventsSeries,
     ],
   };
 }

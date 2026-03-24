@@ -1,4 +1,5 @@
 import type { SpeedVisualMapData } from '@chartsTypes/chartTypes';
+import { EVENTS_MAP } from '@constants/eventMap';
 
 export const grids = [
   { left: 50, right: 50, top: 0, height: '15%' }, // продукты
@@ -174,3 +175,25 @@ export const dataZoom = [
     filterMode: 'weakFilter',
   },
 ];
+
+export const legend = {
+  show: true,
+  orient: 'horizontal',
+  bottom: 10,
+  left: 'center',
+  textStyle: {
+    fontSize: 12,
+    color: '#333',
+  },
+  data: [
+    { name: 'WORK', icon: 'roundRect' },
+    { name: 'STOP', icon: 'roundRect' },
+    { name: 'LOW_SPEED', icon: 'roundRect' },
+    { name: 'STANDARD_OPERATION', icon: 'roundRect' },
+    { name: 'CIP', icon: 'roundRect' },
+  ],
+  selectedMode: false,
+  formatter: function (name: string) {
+    return EVENTS_MAP.find((event) => event.key === name)?.label;
+  },
+};

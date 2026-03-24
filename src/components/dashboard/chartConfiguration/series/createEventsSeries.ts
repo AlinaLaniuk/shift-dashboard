@@ -1,5 +1,6 @@
 import type { EventType } from '@apiTypes/shift';
 import type { EventDataTuple } from '@chartsTypes/chartTypes';
+import { eventsColors } from '@constants/colors';
 import { TYPE_TO_ROW } from '@constants/eventMap';
 import { formatTimeHHMM } from '@utils/helpers/timeHelpers';
 import { format, graphic, type CustomSeriesOption } from 'echarts';
@@ -77,3 +78,15 @@ export function renderEventsItem(
     info: { type, start, end, raw: api.value(0) },
   };
 }
+
+export const fakeEventsSeries = Object.entries(eventsColors).map(([name, color]) => ({
+  name: name,
+  type: 'line',
+  data: [],
+  showInLegend: true,
+  itemStyle: { color: color },
+  barWidth: 0,
+  tooltip: { show: false },
+  lineStyle: { width: 0 },
+  symbol: 'none',
+}));
