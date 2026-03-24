@@ -65,7 +65,7 @@ export function prepareShiftData(rawData: ShiftData): DashboardData {
       },
     ];
   }, []);
-  console.log(speedSetpoint);
+
   function buildSpeedIntervals() {
     const lineSpeed = rawData.lineSpeed;
     const speedSetpoint = rawData.speedSetpoint;
