@@ -174,12 +174,21 @@ export const dataZoom = [
     minSpan: 20,
     filterMode: 'weakFilter',
   },
+  {
+    type: 'slider',
+    xAxisIndex: [0, 1, 2, 3],
+    start: 0,
+    end: 100,
+    minSpan: 20,
+    filterMode: 'weakFilter',
+    bottom: 60,
+  },
 ];
 
 export const legend = {
   show: true,
   orient: 'horizontal',
-  bottom: 10,
+  bottom: 0,
   left: 'center',
   textStyle: {
     fontSize: 12,
