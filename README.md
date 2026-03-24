@@ -1,6 +1,7 @@
 # Shift dashboard
 
 Демо: https://alinalaniuk.github.io/shift-dashboard/
+
 Запуск: npm run dev
 
 # Описание библиотеки визуализации
