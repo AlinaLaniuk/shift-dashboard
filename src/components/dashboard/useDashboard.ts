@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { ShiftData } from '@apiTypes/shift';
 import { prepareShiftData } from '@components/dashboard/prepareShiftData';
 import { shiftApi } from '@api/shiftApi';
+import type { EventDataTuple } from '@chartsTypes/chartTypes';
 
 const defaultData: ShiftData = {
   shift: { start: '', end: '' },
@@ -14,32 +15,25 @@ const defaultData: ShiftData = {
 
 export function useDashboard() {
   const [rawData, setData] = useState(defaultData);
+  const [currentEvent, setCurrentEvent] = useState<EventDataTuple | null>(null);
+
+  async function fetchDashboardData() {
+    const data = await shiftApi.getShiftData();
+    setData(data);
+  }
 
   useEffect(() => {
-    shiftApi.getShiftData().then((res) => setData(res));
+    (async () => {
+      await fetchDashboardData();
+    })();
   }, []);
 
-  const {
-    start,
-    end,
-    products,
-    productsCounter,
-    lineSpeed,
-    speedSetpoint,
-    events,
-    speedVisualMapData,
-    speedMarkAreaData,
-  } = prepareShiftData(rawData);
+  const dashboardData = prepareShiftData(rawData);
 
   return {
-    start,
-    end,
-    products,
-    productsCounter,
-    lineSpeed,
-    speedSetpoint,
-    events,
-    speedVisualMapData,
-    speedMarkAreaData,
+    dashboardData,
+    currentEvent,
+    setCurrentEvent,
+    fetchDashboardData,
   };
 }

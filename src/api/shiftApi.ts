@@ -1,3 +1,4 @@
+import type { UpdateShiftRequest } from '@apiTypes/shift';
 import axios from 'axios';
 
 const api = axios.create({
@@ -15,7 +16,7 @@ export const shiftApi = {
     }
   },
 
-  updateComment: async (payload?: unknown) => {
+  updateComment: async (payload: UpdateShiftRequest) => {
     const { data } = await api.patch('/shift', payload);
     return data;
   },

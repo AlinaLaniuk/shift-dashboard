@@ -44,3 +44,8 @@ export interface ShiftData {
   speedSetpoint: SpeedSetpoint[];
   events: LineEvent[];
 }
+
+export type UpdateShiftRequest = {
+  id: string;
+  comment: string;
+};

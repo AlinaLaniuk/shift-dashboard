@@ -1,26 +1,31 @@
-import { useEffect, useState } from 'react';
+import { shiftApi } from '@api/shiftApi';
+import { useState } from 'react';
 
-export function useCommentModal() {
+export function useCommentModal(fetchDashboardData: () => Promise<void>) {
   const [isOpen, setIsOpen] = useState(false);
-  const [comment, setComment] = useState('');
 
-  useEffect(() => {
-    
-  })
-
-  function openModal() {
+  function openCommentModal() {
     setIsOpen(true);
   }
 
-  function closeModal() {
+  function closeCommentModal() {
     setIsOpen(false);
   }
 
+  const handleSubmitComment = async (eventId: string, comment: string) => {
+    try {
+      await shiftApi.updateComment({ id: eventId, comment: comment });
+      await fetchDashboardData();
+      closeCommentModal();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return {
     isOpen,
-    openModal,
-    closeModal,
-    comment,
-    setComment,
+    openCommentModal,
+    closeCommentModal,
+    handleSubmitComment,
   };
 }

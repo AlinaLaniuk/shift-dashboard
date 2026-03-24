@@ -1,3 +1,4 @@
+import type { ShiftData, UpdateShiftRequest } from '@apiTypes/shift';
 import { http, HttpResponse } from 'msw';
 
 export const mockHandlers = [
@@ -6,7 +7,7 @@ export const mockHandlers = [
       const mock = localStorage.getItem('shift');
       if (!mock) throw new Error('No data in LS');
 
-      const data = JSON.parse(mock);
+      const data: ShiftData = JSON.parse(mock);
       return HttpResponse.json(data);
     } catch (err) {
       console.error('MSW error', err);
@@ -15,17 +16,23 @@ export const mockHandlers = [
   }),
 
   http.patch('/shift', async ({ request }) => {
-    const { id, comment } = await request.json();
+    try {
+      const body = (await request.json()) as UpdateShiftRequest;
+      const { id, comment } = body;
+      const mock = localStorage.getItem('shift');
+      if (!mock) throw new Error('No data in LS');
+      const data: ShiftData = JSON.parse(mock);
+      const event = data.events.find((event) => event.id === id);
+      if (event) {
+        event.comment = comment;
+      }
 
-    const shiftData = JSON.parse(localStorage.getItem('shift') || JSON.stringify(shiftMock));
+      localStorage.setItem('shift', JSON.stringify(data));
 
-    const event = shiftData.events.find((e: any) => e.id === id);
-    if (event) {
-      event.comment = comment;
+      return HttpResponse.json(data);
+    } catch (err) {
+      console.error('MSW error', err);
+      return HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
-
-    localStorage.setItem('shift', JSON.stringify(shiftData));
-
-    return HttpResponse.json(event);
   }),
 ];
