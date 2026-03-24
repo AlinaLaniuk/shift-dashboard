@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# Shift dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Демо: https://alinalaniuk.github.io/shift-dashboard/
+Запуск: npm run dev
 
-Currently, two official plugins are available:
+# Описание библиотеки визуализации
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Для работы с графиками выбрала библиотеку Apache ECharts. При выборе библиотеки обращала внимание на:
+- умеет ли библиотека рисовать график Ганта.
+- может ли работать с графиками стопкой (одна ось x и разные оси y).
+- достаточная гибкость для работы с кастомными требованиями: подсветка участков, где скорость линии ниже уставки, настройка тултипов.
+- есть ли зум, насколько адекватно работает.
 
-## React Compiler
+Рассматриваемые альтернативы:
+- Recharts, Nivo - показалось, что будет сложнее реализовать график Ганта.
+- Plotly.js, Highcharts - все, что нужно, поддерживают из коробки, но требуют лицензии. возможно, это не было бы проблемой для реализации некоммерческого проекта, но не хотелось сюрпризов посреди разработки.
+- VisX - мощная и гибкая библиотека, но для требований задания избыточно.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+ECharts отвечает всем требованиям проекта, легко встраивается в проект на React, имеет подробную документацию и много примеров.
 
-## Expanding the ESLint configuration
+# Описание архитектуры
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- api - запросы
+- components - компоненты дашборда - commentModal и dashboard. в dashboard в папке chartConfiguration вынесена настройка дашборда, разбитая на логические части.
+- constants - константы цветов, а также справочник по событиям.
+- features - здесь один компонент - ShiftDashboard. является медиаторным компонентом для модалки и самого дашборда.
+- mocks - здесь лежат непосредственно моки, а также настройки msw. 'базой данных' служит ls.
+- types - типа для апи и структур данных для графиков.
+- utils - хелперы для работы с временем.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Реализация
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Дашборд представляет собой ряд графиков, объединенных общей временной осью x, но с собственными осями y. 
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+**Продукты**
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+График реализован в виде интервальных цветных блоков. Возможно здесь подошла бы и диаграмма Ганта, но я выбрала итоговую реализацию из предположения, что один вид продукции за смену скорее всего произодится только в один промежуток времени, значит, нет смысла отображать соответствующий изготовлению продукта промежуток времени по разным категориям на оси y. Выполнен с помощью кастомного графика Echarts. Цвета привязаны к справочнику на фронте.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+**Счетчик готовой продукции**
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+Простой линейный график по точкам. 
+
+**Скорость линии/Уставка**
+
+График представлет из себя наложение линейного граифка скорости и ступенчатого линейного графика уставки. Зоны, где скорость падает ниже уставки, выделены полупрозрачной красной зоной. График скорости также разделен на участки с ззелеными линиями и точками (скорость в пределах нормы или выше) и красные линии и точки (скоррость ниже уставки).
+
+У этой части дашборда есть визуальные проблемы с зумом. Если точка уходит за границы дашборжда, прилегающая к ней линия исчезает. Из-за этого линия скорости на большом зуме выглядит обрезанной. Линия уставки имеет те же проблемы, но их я решила с помощью добавления множества промежуточных невидимых точек. Это возможно, так как линия уставки на промежутке времени ровная. Но на линии скорости добавить дополнительные точки нельзя: каждая точка - реальные данные с оборудования, значит добавление точек для визуала может смазать реальную картину. Кроме того, мои моковые данные - рандомный набор точек, которые я написала больше с целью увидеть разные сценарии, в них нет привязки к реальности. Возможно на реальных данных такой проблемы возникать не будет.
+
+**События линии**
+
+Предсталвены диаграммой Ганта. Цвета соответствуют событиям и привязаны к справочнику на фронте. По нажатию на 'колбаску' открывается модалка, в которой можно написать комментарий. Каждый новый комментарий на событие затирает предыдущий. Комментарии сохраняются между загрузками страницы. 
+
+**Другие особенности реализации:**
+- Все графики поддерживают отображение тултипа в соответствии с заданием.
+- Дашборд поддерживает зум. Зум сделан двух видов: по колесику и в виде горизонтального скролла. Дашборд корректно отображается на разных расширениях и графики читаемы благодаря зуму. На совсем маленьких экранах возможны проблемы с визуализацией, но вряд ли здесь нужна поддержка на мобилках.
+- Легенда описывает цвета событий линии. Но легенда отображает только цветовые различия, здесь нет функционала, заложенного самой библиотекой: по нажатию на элемент легенды скрывается слой данных. Реализовать можно, но немного костыльно и достаточно дорого по времени. Даже то, что есть, выполнено с помощью фейковой серии данных, ее можно посмотреть в модуле src\components\dashboard\chartConfiguration\series\createEventsSeries.ts. Поэтому делать не стала, тажке из-за этих ограничений библиотеки не выполнен пункт о toggle видимости отдельных слоев.
+
+
